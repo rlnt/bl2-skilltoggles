@@ -26,4 +26,4 @@ Download https://github.com/Chronophylos/bl2_skilltoggles/releases/latest[the zi
 
 === Version 1.0.0
 
-Initial Releas
+Initial Release
