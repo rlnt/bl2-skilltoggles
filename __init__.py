@@ -61,12 +61,12 @@ class SkillToggles(SDKMod):
 
         self.Options = [self._optionCustomKeybindEnable, *self._classToOption.values()]
 
-        self._keybindToggleBuzzaxe = Keybind("Toggle Deathtrap", "F", True)
+        self._keybindToggleBuzzaxe = Keybind("Toggle Buzzaxe", "F", True)
         self._keybindToggleDeathtrap = Keybind("Toggle Deathtrap", "F", True)
-        self._keybindToggleDualWield = Keybind("Toggle Deathtrap", "F", True)
-        self._keybindToggleExecute = Keybind("Toggle Deathtrap", "F", True)
-        self._keybindToggleLift = Keybind("Toggle Deathtrap", "F", True)
-        self._keybindToggleScorpio = Keybind("Toggle Deathtrap", "F", True)
+        self._keybindToggleDualWield = Keybind("Toggle Dual Wield", "F", True)
+        self._keybindToggleExecute = Keybind("Toggle Execute", "F", True)
+        self._keybindToggleLift = Keybind("Toggle Lift", "F", True)
+        self._keybindToggleScorpio = Keybind("Toggle Scorpio", "F", True)
 
         self.Keybinds = [
             self._keybindToggleBuzzaxe,
