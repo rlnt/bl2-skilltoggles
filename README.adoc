@@ -3,11 +3,11 @@
 *PythonSDK Version*: `0.7.9`
 *Mod Menu Version*: `2.4`
 
-Disable Action Skills by holding a configurable hotkey
+Deactivate Action Skills by holding a configurable hotkey
 
 == Features
 
-- Disable Action Skills
+- Deactivate Action Skills
 - Configurable Hotkeys
 
 == Options
