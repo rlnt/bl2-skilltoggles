@@ -3,18 +3,16 @@
 *PythonSDK Version*: `0.7.9`
 *Mod Menu Version*: `2.4`
 
-
-< add short description here >
-
-< add longer description here >
+Disable Action Skills by holding a configurable hotkey
 
 == Features
 
-< add features here >
+- Disable Action Skills
+- Configurable Hotkeys
 
 == Options
 
-< explain options here >
+You can enable the hotkey for every class individually
 
 == Requirements
 
@@ -25,3 +23,7 @@
 Download https://github.com/Chronophylos/bl2_skilltoggles/releases/latest[the zip] and extract it to `Borderlands 2\Binaries\Win32\Mods`.
 
 == Changelog
+
+=== Version 1.0.0
+
+Initial Releas

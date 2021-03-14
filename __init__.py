@@ -7,29 +7,27 @@ from Mods.ModMenu import (
     EnabledSaveType,
     KeybindManager,
     Keybind,
-    OptionManager,
     Options,
     Game,
 )
-from typing import Any
 
 
 class SkillToggles(SDKMod):
     Name: str = "Skill Toggles"
     Author: str = "DamnRelentless, Chronophylos"
-    Description: str = ""
-    Version: str = "0.1.0"
+    Description: str = "Disable Action Skills by holding a configurable hotkey"
+    Version: str = "1.0.0"
 
     SupportedGames: Game = Game.BL2
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
 
+    Keybinds = [
+        Keybind("Deactivate Action Skill", "F", True),
+    ]
+
     def __init__(self) -> None:
         super().__init__()
-
-        self._optionCustomKeybindEnable = Options.Boolean(
-            "Enable Custom Keybinds", "Enable custom keybinds for each skill", False
-        )
 
         option_buzzaxe_skill_toggle = Options.Boolean(
             "Enable Psycho Skill Toggle", "Allow returning from Buzzaxe", False
@@ -59,29 +57,7 @@ class SkillToggles(SDKMod):
             "Commando": option_scorpio_skill_toggle,
         }
 
-        self.Options = [self._optionCustomKeybindEnable, *self._classToOption.values()]
-
-        self._keybindToggleBuzzaxe = Keybind("Toggle Buzzaxe", "F", True)
-        self._keybindToggleDeathtrap = Keybind("Toggle Deathtrap", "F", True)
-        self._keybindToggleDualWield = Keybind("Toggle Dual Wield", "F", True)
-        self._keybindToggleExecute = Keybind("Toggle Execute", "F", True)
-        self._keybindToggleLift = Keybind("Toggle Lift", "F", True)
-        self._keybindToggleScorpio = Keybind("Toggle Scorpio", "F", True)
-
-        self.Keybinds = [
-            self._keybindToggleBuzzaxe,
-            self._keybindToggleDeathtrap,
-            self._keybindToggleDualWield,
-            self._keybindToggleExecute,
-            self._keybindToggleLift,
-            self._keybindToggleScorpio,
-        ]
-
-        self._setKeybinds(self._optionCustomKeybindEnable.CurrentValue)
-
-    def _setKeybinds(self, keybindsEnabled: bool) -> None:
-        for keybind in self.Keybinds:
-            keybind.IsHidden = not keybindsEnabled
+        self.Options = [*self._classToOption.values()]
 
     def _log(self, message: str) -> None:
         unrealsdk.Log(f"[{self.Name}] {message}")
@@ -98,27 +74,26 @@ class SkillToggles(SDKMod):
         skill_manager = player.GetSkillManager()
         action_skill = player.PlayerSkillTree.GetActionSkill()
 
-        class_name = player.PlayerClass.CharacterNameId.CharacterClassId.ClassName
-        if not self._isSkillToggleEnabledForClass(class_name):
-            return
-
         if skill_manager.IsSkillActive(player, action_skill):
             self._log("Prematurely deactivating ActionSkill")
             player.Behavior_DeactivateSkill(action_skill, False)
 
+    def _getCurrentPlayerClassName(self) -> str:
+        engine = unrealsdk.GetEngine()
+        player = engine.GamePlayers[0].Actor
+        return str(player.PlayerClass.CharacterNameId.CharacterClassId.ClassName)
+
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
     ) -> None:
-        if event != KeybindManager.InputEvent.Pressed:
+        class_name = self._getCurrentPlayerClassName()
+        if not self._isSkillToggleEnabledForClass(class_name):
+            return
+
+        if event != KeybindManager.InputEvent.Repeat:
             return
 
         self._deactivateActionSkill()
-
-    def ModOptionChanged(
-        self, option: OptionManager.Options.Base, new_value: Any
-    ) -> None:
-        if option.Caption == self._optionCustomKeybindEnable.Caption:
-            self._setKeybinds(new_value)
 
 
 instance = SkillToggles()
