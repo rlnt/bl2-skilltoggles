@@ -9,6 +9,7 @@ from Mods.ModMenu import (
     Keybind,
     OptionManager,
     Options,
+    Game,
 )
 from typing import Any
 
@@ -19,11 +20,9 @@ class SkillToggles(SDKMod):
     Description: str = ""
     Version: str = "0.1.0"
 
+    SupportedGames: Game = Game.BL2
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
-
-    ActionSkillActive: bool = False
-    StopActionSkill: bool = False
 
     def __init__(self) -> None:
         super().__init__()
