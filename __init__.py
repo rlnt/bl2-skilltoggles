@@ -92,21 +92,7 @@ class SkillToggles(SDKMod):
 
         return self._classToOption[name].CurrentValue
 
-    def GameInputPressed(
-        self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
-    ) -> None:
-        if event != KeybindManager.InputEvent.Pressed:
-            return
-
-        self.DeactivateActionSkill()
-
-    def ModOptionChanged(
-        self, option: OptionManager.Options.Base, new_value: Any
-    ) -> None:
-        if option.Caption == self._optionCustomKeybindEnable.Caption:
-            self._setKeybinds(new_value)
-
-    def DeactivateActionSkill(self) -> None:
+    def _deactivateActionSkill(self) -> None:
         engine = unrealsdk.GetEngine()
         player = engine.GamePlayers[0].Actor
         skill_manager = player.GetSkillManager()
@@ -119,6 +105,20 @@ class SkillToggles(SDKMod):
         if skill_manager.IsSkillActive(player, action_skill):
             self._log("Prematurely deactivating ActionSkill")
             player.Behavior_DeactivateSkill(action_skill, False)
+
+    def GameInputPressed(
+        self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
+    ) -> None:
+        if event != KeybindManager.InputEvent.Pressed:
+            return
+
+        self._deactivateActionSkill()
+
+    def ModOptionChanged(
+        self, option: OptionManager.Options.Base, new_value: Any
+    ) -> None:
+        if option.Caption == self._optionCustomKeybindEnable.Caption:
+            self._setKeybinds(new_value)
 
 
 instance = SkillToggles()
