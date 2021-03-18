@@ -2,17 +2,23 @@
 
 > A [PythonSDK] mod for [Borderlands 2][borderlands] to deactivate Action Skills with a configurable hotkey.
 
--   [Discord][discord]
--   PythonSDK: `v0.7.9`
--   Mod Menu: `v2.4`
+- [Discord][discord]
+- PythonSDK: `v0.7.9`
+- Mod Menu: `v2.4`
 
 ---
 
-## **📑 Features**
+## **📎 Features**
 
--   deactivate the Action Skill for each character
--   configurable hotkey or the default Action Skill hotkey
--   options to enable the feature for each class individually
+- deactivate the Action Skill for each character
+- configurable hotkey or the default Action Skill hotkey
+- options to enable the feature for each class individually
+
+## **📑 Notes**
+- this is a [PythonSDK] mod, you **can't** install it with BLCMM
+- Actions Skills are deactivated by *holding* the key, not by pressing it
+- the configurable hotkey is only visible in the modded keybinds if the custom keybind option is enabled
+- deactivating Action Skills won't give you a cooldown bonus
 
 ## **🔧 Installation**
 
