@@ -25,38 +25,38 @@ class SkillToggles(SDKMod):
     def __init__(self) -> None:
         super().__init__()
 
-        option_custom_keybind = Options.Boolean(
+        self._optionCustomKeybind = Options.Boolean(
             "Custom Keybind", "Do you want to use a custom keybind to toggle the Action Skills? If this is off, you have to use your default Action Skill keybind.", False
         )
-        option_buzzaxe_skill_toggle = Options.Boolean(
-            "Psycho Skill Toggle", "Allows Krieg to return from the Buzzaxe Rampage.", True
+        optionPsychoToggle = Options.Boolean(
+            "Psycho Skill Toggle", "Allows Krieg to return from his Buzzaxe Rampage.", True
         )
-        option_deathtrap_skill_toggle = Options.Boolean(
-            "Mechromancer Skill Toggle", "Allows Gaige to recall Deathtrap.", True
+        optionMechromancerToggle = Options.Boolean(
+            "Mechromancer Skill Toggle", "Allows Gaige to recall her Deathtrap.", True
         )
-        option_dual_wield_skill_toggle = Options.Boolean(
+        optionGunzerkerToggle = Options.Boolean(
             "Gunzerker Skill Toggle", "Allows Salvador to stop his Dual Wield.", True
         )
-        option_execute_skill_toggle = Options.Boolean(
+        optionAssassinToggle = Options.Boolean(
             "Assassin Skill Toggle", "Allows Zer0 to stop Decepti0n.", True
         )
-        option_lift_skill_toggle = Options.Boolean(
+        optionSirenToggle = Options.Boolean(
             "Siren Skill Toggle", "Allows Maya to stop her Phaselock.", True
         )
-        option_scorpio_skill_toggle = Options.Boolean(
+        optionCommandoToggle = Options.Boolean(
             "Commando Skill Toggle", "Allows Axton to recall his turrets.", True
         )
 
         self._classOptions = {
-            "Psycho": option_buzzaxe_skill_toggle,
-            "Mechromancer": option_deathtrap_skill_toggle,
-            "Gunzerker": option_dual_wield_skill_toggle,
-            "Assassin": option_execute_skill_toggle,
-            "Siren": option_lift_skill_toggle,
-            "Commando": option_scorpio_skill_toggle,
+            "Psycho": optionPsychoToggle,
+            "Mechromancer": optionMechromancerToggle,
+            "Gunzerker": optionGunzerkerToggle,
+            "Assassin": optionAssassinToggle,
+            "Siren": optionSirenToggle,
+            "Commando": optionCommandoToggle,
         }
 
-        self.Options = [option_custom_keybind, *self._classOptions.values()]
+        self.Options = [self._optionCustomKeybind, *self._classOptions.values()]
         self._setupKeybinds()
 
     def ModOptionChanged(self, option, newValue):
@@ -68,7 +68,7 @@ class SkillToggles(SDKMod):
 
     def _setupKeybinds(self) -> None:
         self.Keybinds = [
-            Keybind("Deactivate Action Skill", "F", True, self.Options[0].CurrentValue)
+            Keybind("Deactivate Action Skill", "F", True, self._optionCustomKeybind.CurrentValue)
         ]
 
     def _getPlayerController(self):
@@ -102,7 +102,7 @@ class SkillToggles(SDKMod):
 
     @Hook("WillowGame.WillowUIInteraction.InputKey")
     def _inputKey(self, caller: unrealsdk.UObject, function: unrealsdk.UFunction, params: unrealsdk.FStruct):
-        if self.Options[0].CurrentValue or params.Event != KeybindManager.InputEvent.Repeat:
+        if self._optionCustomKeybind.CurrentValue or params.Event != KeybindManager.InputEvent.Repeat:
             return True
 
         player = self._getPlayerController()
