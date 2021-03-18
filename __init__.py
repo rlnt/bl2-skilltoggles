@@ -14,7 +14,7 @@ from Mods.ModMenu import (
 
 class SkillToggles(SDKMod):
     Name: str = "Skill Toggles"
-    Author: str = "DamnRelentless, Chronophylos"
+    Author: str = "Relentless, Chronophylos"
     Description: str = "Disable Action Skills by holding a configurable hotkey"
     Version: str = "1.0.0"
 
