@@ -9,8 +9,9 @@ from Mods.ModMenu import (
     KeybindManager,
     Game,
     Hook,
-    RegisterMod
+    RegisterMod,
 )
+
 
 class SkillToggles(SDKMod):
     Name: str = "Skill Toggles"
@@ -26,10 +27,14 @@ class SkillToggles(SDKMod):
         super().__init__()
 
         self._optionCustomKeybind = Options.Boolean(
-            "Custom Keybind", "Do you want to use a custom keybind to toggle the Action Skills? If this is off, you have to use your default Action Skill keybind.", False
+            "Custom Keybind",
+            "Do you want to use a custom keybind to toggle the Action Skills? If this is off, you have to use your default Action Skill keybind.",
+            False,
         )
         optionPsychoToggle = Options.Boolean(
-            "Psycho Skill Toggle", "Allows Krieg to return from his Buzzaxe Rampage.", True
+            "Psycho Skill Toggle",
+            "Allows Krieg to return from his Buzzaxe Rampage.",
+            True,
         )
         optionMechromancerToggle = Options.Boolean(
             "Mechromancer Skill Toggle", "Allows Gaige to recall her Deathtrap.", True
@@ -63,15 +68,15 @@ class SkillToggles(SDKMod):
         if option.Caption == "Custom Keybind":
             self._setupKeybinds()
 
-    def _log(self, message: str) -> None:
-        unrealsdk.Log(f"[{self.Name}] {message}")
-
     def _setupKeybinds(self) -> None:
         self.Keybinds = [
             Keybind(
                 "Deactivate Action Skill", "F", self._optionCustomKeybind.CurrentValue
             )
         ]
+
+    def _log(self, message: str) -> None:
+        unrealsdk.Log(f"[{self.Name}] {message}")
 
     def _getPlayerController(self):
         return unrealsdk.GetEngine().GamePlayers[0].Actor
@@ -103,8 +108,16 @@ class SkillToggles(SDKMod):
         self._handleSkillToggling()
 
     @Hook("WillowGame.WillowUIInteraction.InputKey")
-    def _inputKey(self, caller: unrealsdk.UObject, function: unrealsdk.UFunction, params: unrealsdk.FStruct):
-        if self._optionCustomKeybind.CurrentValue or params.Event != KeybindManager.InputEvent.Repeat:
+    def _inputKey(
+        self,
+        caller: unrealsdk.UObject,
+        function: unrealsdk.UFunction,
+        params: unrealsdk.FStruct,
+    ):
+        if (
+            self._optionCustomKeybind.CurrentValue
+            or params.Event != KeybindManager.InputEvent.Repeat
+        ):
             return True
 
         player = self._getPlayerController()
@@ -118,13 +131,19 @@ class SkillToggles(SDKMod):
         return True
 
     @Hook("WillowGame.ActionSkill.OnActionSkillEnded")
-    def _onActionSkillEnded(self, caller: unrealsdk.UObject, function: unrealsdk.UFunction, params: unrealsdk.FStruct):
+    def _onActionSkillEnded(
+        self,
+        caller: unrealsdk.UObject,
+        function: unrealsdk.UFunction,
+        params: unrealsdk.FStruct,
+    ):
         actionSkill = self._getPlayerController().PlayerSkillTree.GetActionSkill()
 
         if actionSkill.bCanBeToggledOff == True:
             actionSkill.bCanBeToggledOff = False
 
         return True
+
 
 instance = SkillToggles()
 if __name__ == "__main__":
