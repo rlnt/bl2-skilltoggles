@@ -16,7 +16,7 @@
 
 ## **🔧 Installation**
 
-1. download the latest **release** from the [releases]
+1. download the latest **release** from [releases]
 2. extract it to `Borderlands 2\Binaries\Win32\Mods`
 3. activate the mod in the Mod Menu within the game
 
