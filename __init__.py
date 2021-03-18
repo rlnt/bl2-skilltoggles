@@ -68,7 +68,9 @@ class SkillToggles(SDKMod):
 
     def _setupKeybinds(self) -> None:
         self.Keybinds = [
-            Keybind("Deactivate Action Skill", "F", True, self._optionCustomKeybind.CurrentValue)
+            Keybind(
+                "Deactivate Action Skill", "F", self._optionCustomKeybind.CurrentValue
+            )
         ]
 
     def _getPlayerController(self):
