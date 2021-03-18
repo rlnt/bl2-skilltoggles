@@ -15,7 +15,7 @@ from Mods.ModMenu import (
 class SkillToggles(SDKMod):
     Name: str = "Skill Toggles"
     Author: str = "Relentless, Chronophylos"
-    Description: str = "Disable Action Skills by holding a configurable hotkey"
+    Description: str = "Deactivate Action Skills by holding a configurable hotkey."
     Version: str = "1.0.0"
 
     SupportedGames: Game = Game.BL2
@@ -30,22 +30,22 @@ class SkillToggles(SDKMod):
         super().__init__()
 
         option_buzzaxe_skill_toggle = Options.Boolean(
-            "Enable Psycho Skill Toggle", "Allow returning from Buzzaxe", False
+            "Psycho Skill Toggle", "Allows Krieg to return from the Buzzaxe Rampage.", True
         )
         option_deathtrap_skill_toggle = Options.Boolean(
-            "Enable Mechromancer Skill Toggle", "Allow recalling Deathtrap", False
+            "Mechromancer Skill Toggle", "Allows Gaige to recall Deathtrap.", True
         )
         option_dual_wield_skill_toggle = Options.Boolean(
-            "Enable Gunzerker Skill Toggle", "Allow stopping Dual Wield", False
+            "Gunzerker Skill Toggle", "Allows Salvador to stop his Dual Wield.", True
         )
         option_execute_skill_toggle = Options.Boolean(
-            "Enable Assassin Skill Toggle", "Allow stopping Execute", False
+            "Assassin Skill Toggle", "Allows Zer0 to stop Decepti0n.", True
         )
         option_lift_skill_toggle = Options.Boolean(
-            "Enable Siren Skill Toggle", "Allow stopping Phaselog", False
+            "Siren Skill Toggle", "Allows Maya to stop her Phaselock.", True
         )
         option_scorpio_skill_toggle = Options.Boolean(
-            "Enable Commando Skill Toggle", "Allow recalling Turrets", False
+            "Commando Skill Toggle", "Allows Axton to recall his turrets.", True
         )
 
         self._classToOption = {
