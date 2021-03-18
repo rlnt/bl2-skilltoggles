@@ -2,53 +2,52 @@ import unrealsdk
 from Mods.ModMenu import (
     SDKMod,
     Mods,
-    RegisterMod,
     ModTypes,
     EnabledSaveType,
-    KeybindManager,
-    Keybind,
     Options,
+    Keybind,
+    KeybindManager,
     Game,
+    Hook,
+    RegisterMod
 )
-
 
 class SkillToggles(SDKMod):
     Name: str = "Skill Toggles"
-    Author: str = "DamnRelentless, Chronophylos"
-    Description: str = "Disable Action Skills by holding a configurable hotkey"
-    Version: str = "1.0.0"
+    Author: str = "Relentless, Chronophylos"
+    Description: str = "Deactivate Action Skills by holding a configurable hotkey."
+    Version: str = "1.1.0"
 
     SupportedGames: Game = Game.BL2
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
 
-    Keybinds = [
-        Keybind("Deactivate Action Skill", "F", True),
-    ]
-
     def __init__(self) -> None:
         super().__init__()
 
+        option_custom_keybind = Options.Boolean(
+            "Custom Keybind", "Do you want to use a custom keybind to toggle the Action Skills? If this is off, you have to use your default Action Skill keybind.", False
+        )
         option_buzzaxe_skill_toggle = Options.Boolean(
-            "Enable Psycho Skill Toggle", "Allow returning from Buzzaxe", False
+            "Psycho Skill Toggle", "Allows Krieg to return from the Buzzaxe Rampage.", True
         )
         option_deathtrap_skill_toggle = Options.Boolean(
-            "Enable Mechromancer Skill Toggle", "Allow recalling Deathtrap", False
+            "Mechromancer Skill Toggle", "Allows Gaige to recall Deathtrap.", True
         )
         option_dual_wield_skill_toggle = Options.Boolean(
-            "Enable Gunzerker Skill Toggle", "Allow stopping Dual Wield", False
+            "Gunzerker Skill Toggle", "Allows Salvador to stop his Dual Wield.", True
         )
         option_execute_skill_toggle = Options.Boolean(
-            "Enable Assassin Skill Toggle", "Allow stopping Execute", False
+            "Assassin Skill Toggle", "Allows Zer0 to stop Decepti0n.", True
         )
         option_lift_skill_toggle = Options.Boolean(
-            "Enable Siren Skill Toggle", "Allow stopping Phaselog", False
+            "Siren Skill Toggle", "Allows Maya to stop her Phaselock.", True
         )
         option_scorpio_skill_toggle = Options.Boolean(
-            "Enable Commando Skill Toggle", "Allow recalling Turrets", False
+            "Commando Skill Toggle", "Allows Axton to recall his turrets.", True
         )
 
-        self._classToOption = {
+        self._classOptions = {
             "Psycho": option_buzzaxe_skill_toggle,
             "Mechromancer": option_deathtrap_skill_toggle,
             "Gunzerker": option_dual_wield_skill_toggle,
@@ -57,44 +56,73 @@ class SkillToggles(SDKMod):
             "Commando": option_scorpio_skill_toggle,
         }
 
-        self.Options = [*self._classToOption.values()]
+        self.Options = [option_custom_keybind, *self._classOptions.values()]
+        self._setupKeybinds()
+
+    def ModOptionChanged(self, option, newValue):
+        if option.Caption == "Custom Keybind":
+            self._setupKeybinds()
 
     def _log(self, message: str) -> None:
         unrealsdk.Log(f"[{self.Name}] {message}")
 
-    def _isSkillToggleEnabledForClass(self, name: str) -> bool:
-        if name not in self._classToOption:
+    def _setupKeybinds(self) -> None:
+        self.Keybinds = [
+            Keybind("Deactivate Action Skill", "F", True, self.Options[0].CurrentValue)
+        ]
+
+    def _getPlayerController(self):
+        return unrealsdk.GetEngine().GamePlayers[0].Actor
+
+    def _isSkillToggleable(self) -> bool:
+        player = self._getPlayerController()
+        className = player.PlayerClass.CharacterNameId.CharacterClassId.ClassName
+
+        if className not in self._classOptions:
             return False
 
-        return self._classToOption[name].CurrentValue
+        return self._classOptions[className].CurrentValue
 
-    def _deactivateActionSkill(self) -> None:
-        engine = unrealsdk.GetEngine()
-        player = engine.GamePlayers[0].Actor
-        skill_manager = player.GetSkillManager()
-        action_skill = player.PlayerSkillTree.GetActionSkill()
+    def _handleSkillToggling(self) -> None:
+        player = self._getPlayerController()
+        skillManager = player.GetSkillManager()
+        actionSkill = player.PlayerSkillTree.GetActionSkill()
 
-        if skill_manager.IsSkillActive(player, action_skill):
-            self._log("Prematurely deactivating ActionSkill")
-            player.Behavior_DeactivateSkill(action_skill, False)
-
-    def _getCurrentPlayerClassName(self) -> str:
-        engine = unrealsdk.GetEngine()
-        player = engine.GamePlayers[0].Actor
-        return str(player.PlayerClass.CharacterNameId.CharacterClassId.ClassName)
+        if skillManager.IsSkillActive(player, actionSkill):
+            actionSkill.bCanBeToggledOff = True
+            player.StartActionSkill()
 
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
     ) -> None:
-        class_name = self._getCurrentPlayerClassName()
-        if not self._isSkillToggleEnabledForClass(class_name):
+        if event != KeybindManager.InputEvent.Repeat or not self._isSkillToggleable():
             return
 
-        if event != KeybindManager.InputEvent.Repeat:
-            return
+        self._handleSkillToggling()
 
-        self._deactivateActionSkill()
+    @Hook("WillowGame.WillowUIInteraction.InputKey")
+    def _inputKey(self, caller: unrealsdk.UObject, function: unrealsdk.UFunction, params: unrealsdk.FStruct):
+        if self.Options[0].CurrentValue or params.Event != KeybindManager.InputEvent.Repeat:
+            return True
 
+        player = self._getPlayerController()
+        hotkey = player.PlayerInput.GetKeyForAction("ActionSkill", True)
+
+        if params.Key != hotkey or not self._isSkillToggleable():
+            return True
+
+        self._handleSkillToggling()
+
+        return True
+
+    @Hook("WillowGame.ActionSkill.OnActionSkillEnded")
+    def _onActionSkillEnded(self, caller: unrealsdk.UObject, function: unrealsdk.UFunction, params: unrealsdk.FStruct):
+        actionSkill = self._getPlayerController().PlayerSkillTree.GetActionSkill()
+
+        if actionSkill.bCanBeToggledOff == True:
+            actionSkill.bCanBeToggledOff = False
+
+        return True
 
 instance = SkillToggles()
 if __name__ == "__main__":
