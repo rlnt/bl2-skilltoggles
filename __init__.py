@@ -81,7 +81,7 @@ class SkillToggles(SDKMod):
     def _log(self, message: str) -> None:
         unrealsdk.Log(f"[{self.Name}] {message}")
 
-    def _getPlayerController(self):
+    def _getPlayerController(self) -> unrealsdk.UObject:
         return unrealsdk.GetEngine().GamePlayers[0].Actor
 
     def _isSkillToggleable(self) -> bool:
@@ -100,7 +100,7 @@ class SkillToggles(SDKMod):
 
         if skillManager.IsSkillActive(player, actionSkill):
             actionSkill.bCanBeToggledOff = True
-            player.StartActionSkill()
+            player.ServerStartActionSkill()
 
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
@@ -145,9 +145,7 @@ class SkillToggles(SDKMod):
         params: unrealsdk.FStruct,
     ):
         actionSkill = self._getPlayerController().PlayerSkillTree.GetActionSkill()
-
-        if actionSkill.bCanBeToggledOff == True:
-            actionSkill.bCanBeToggledOff = False
+        actionSkill.bCanBeToggledOff = False
 
         return True
 
