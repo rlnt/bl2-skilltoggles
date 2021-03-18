@@ -62,16 +62,19 @@ class SkillToggles(SDKMod):
         }
 
         self.Options = [self._optionCustomKeybind, *self._classOptions.values()]
-        self._setupKeybinds()
+        self._setupKeybinds(False)
 
     def ModOptionChanged(self, option, newValue):
         if option.Caption == "Custom Keybind":
-            self._setupKeybinds()
+            self._setupKeybinds(newValue)
 
-    def _setupKeybinds(self) -> None:
+    def _setupKeybinds(self, newValue: bool) -> None:
         self.Keybinds = [
             Keybind(
-                "Deactivate Action Skill", "F", self._optionCustomKeybind.CurrentValue
+                "Deactivate Action Skill",
+                "F",
+                True,
+                not newValue,
             )
         ]
 
@@ -102,7 +105,11 @@ class SkillToggles(SDKMod):
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
     ) -> None:
-        if event != KeybindManager.InputEvent.Repeat or not self._isSkillToggleable():
+        if (
+            event != KeybindManager.InputEvent.Repeat
+            or self._optionCustomKeybind.CurrentValue == False
+            or not self._isSkillToggleable()
+        ):
             return
 
         self._handleSkillToggling()
@@ -115,8 +122,8 @@ class SkillToggles(SDKMod):
         params: unrealsdk.FStruct,
     ):
         if (
-            self._optionCustomKeybind.CurrentValue
-            or params.Event != KeybindManager.InputEvent.Repeat
+            params.Event != KeybindManager.InputEvent.Repeat
+            or self._optionCustomKeybind.CurrentValue == True
         ):
             return True
 
