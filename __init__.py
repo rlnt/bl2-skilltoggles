@@ -98,25 +98,8 @@ class SkillToggles(SDKMod):
         super().Enable()
         log(self, f"Version: {self.Version}")
 
-    def ModOptionChanged(self, option, newValue):
-        if option.Caption == "Custom Keybind":
-            self._setupKeybinds(newValue)
-
     def _setupKeybinds(self, newValue: bool) -> None:
-        self.Keybinds = [
-            Keybind(
-                "Deactivate Action Skill",
-                "F",
-                True,
-                not newValue,
-            )
-        ]
-
-    def _log(self, message: str) -> None:
-        unrealsdk.Log(f"[{self.Name}] {message}")
-
-    def _getPlayerController(self) -> unrealsdk.UObject:
-        return unrealsdk.GetEngine().GamePlayers[0].Actor
+        self.Keybinds = [Keybind("Deactivate Action Skill", "F", True, not newValue)]
 
     def _isSkillToggleable(self) -> bool:
         player = getCurrentPlayerController()
@@ -143,6 +126,10 @@ class SkillToggles(SDKMod):
             webbrowser.open("https://discord.com/invite/Q3qxws6")
         else:
             super().SettingsInputPressed(action)
+
+    def ModOptionChanged(self, option, newValue):
+        if option.Caption == "Custom Keybind":
+            self._setupKeybinds(newValue)
 
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
