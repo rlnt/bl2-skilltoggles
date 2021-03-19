@@ -9,8 +9,11 @@ from Mods.ModMenu import (
     KeybindManager,
     Game,
     Hook,
-    RegisterMod
+    RegisterMod,
 )
+from Mods.Eridium import log
+from Mods.Eridium.misc import getCurrentPlayerController
+
 
 class SkillToggles(SDKMod):
     Name: str = "Skill Toggles"
@@ -26,10 +29,14 @@ class SkillToggles(SDKMod):
         super().__init__()
 
         option_custom_keybind = Options.Boolean(
-            "Custom Keybind", "Do you want to use a custom keybind to toggle the Action Skills? If this is off, you have to use your default Action Skill keybind.", False
+            "Custom Keybind",
+            "Do you want to use a custom keybind to toggle the Action Skills? If this is off, you have to use your default Action Skill keybind.",
+            False,
         )
         option_buzzaxe_skill_toggle = Options.Boolean(
-            "Psycho Skill Toggle", "Allows Krieg to return from the Buzzaxe Rampage.", True
+            "Psycho Skill Toggle",
+            "Allows Krieg to return from the Buzzaxe Rampage.",
+            True,
         )
         option_deathtrap_skill_toggle = Options.Boolean(
             "Mechromancer Skill Toggle", "Allows Gaige to recall Deathtrap.", True
@@ -59,12 +66,14 @@ class SkillToggles(SDKMod):
         self.Options = [option_custom_keybind, *self._classOptions.values()]
         self._setupKeybinds()
 
+    def Enable(self) -> None:
+        super().Enable()
+
+        log(self, f"Version: {self.Version}")
+
     def ModOptionChanged(self, option, newValue):
         if option.Caption == "Custom Keybind":
             self._setupKeybinds()
-
-    def _log(self, message: str) -> None:
-        unrealsdk.Log(f"[{self.Name}] {message}")
 
     def _setupKeybinds(self) -> None:
         self.Keybinds = [
@@ -75,7 +84,7 @@ class SkillToggles(SDKMod):
         return unrealsdk.GetEngine().GamePlayers[0].Actor
 
     def _isSkillToggleable(self) -> bool:
-        player = self._getPlayerController()
+        player = getCurrentPlayerController()
         className = player.PlayerClass.CharacterNameId.CharacterClassId.ClassName
 
         if className not in self._classOptions:
@@ -84,7 +93,7 @@ class SkillToggles(SDKMod):
         return self._classOptions[className].CurrentValue
 
     def _handleSkillToggling(self) -> None:
-        player = self._getPlayerController()
+        player = getCurrentPlayerController()
         skillManager = player.GetSkillManager()
         actionSkill = player.PlayerSkillTree.GetActionSkill()
 
@@ -101,11 +110,19 @@ class SkillToggles(SDKMod):
         self._handleSkillToggling()
 
     @Hook("WillowGame.WillowUIInteraction.InputKey")
-    def _inputKey(self, caller: unrealsdk.UObject, function: unrealsdk.UFunction, params: unrealsdk.FStruct):
-        if self.Options[0].CurrentValue or params.Event != KeybindManager.InputEvent.Repeat:
+    def _inputKey(
+        self,
+        caller: unrealsdk.UObject,
+        function: unrealsdk.UFunction,
+        params: unrealsdk.FStruct,
+    ):
+        if (
+            self.Options[0].CurrentValue
+            or params.Event != KeybindManager.InputEvent.Repeat
+        ):
             return True
 
-        player = self._getPlayerController()
+        player = getCurrentPlayerController()
         hotkey = player.PlayerInput.GetKeyForAction("ActionSkill", True)
 
         if params.Key != hotkey or not self._isSkillToggleable():
@@ -116,23 +133,29 @@ class SkillToggles(SDKMod):
         return True
 
     @Hook("WillowGame.ActionSkill.OnActionSkillEnded")
-    def _onActionSkillEnded(self, caller: unrealsdk.UObject, function: unrealsdk.UFunction, params: unrealsdk.FStruct):
-        actionSkill = self._getPlayerController().PlayerSkillTree.GetActionSkill()
+    def _onActionSkillEnded(
+        self,
+        caller: unrealsdk.UObject,
+        function: unrealsdk.UFunction,
+        params: unrealsdk.FStruct,
+    ):
+        actionSkill = getCurrentPlayerController().PlayerSkillTree.GetActionSkill()
 
-        if actionSkill.bCanBeToggledOff == True:
+        if actionSkill.bCanBeToggledOff is True:
             actionSkill.bCanBeToggledOff = False
 
         return True
 
+
 instance = SkillToggles()
 if __name__ == "__main__":
-    unrealsdk.Log(f"[{instance.Name}] Manually loaded")
+    log("Manually loaded")
     for mod in Mods:
         if mod.Name == instance.Name:
             if mod.IsEnabled:
                 mod.Disable()
             Mods.remove(mod)
-            unrealsdk.Log(f"[{instance.Name}] Removed last instance")
+            log("Removed last instance")
 
             # Fixes inspect.getfile()
             instance.__class__.__module__ = mod.__class__.__module__
