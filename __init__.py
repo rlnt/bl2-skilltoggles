@@ -19,7 +19,7 @@ class SkillToggles(SDKMod):
     Name: str = "Skill Toggles"
     Author: str = "Relentless, Chronophylos"
     Description: str = "Deactivate Action Skills by holding a configurable hotkey."
-    Version: str = "1.1.0"
+    Version: str = "1.1.1"
 
     SupportedGames: Game = Game.BL2
     Types: ModTypes = ModTypes.Utility
@@ -28,43 +28,43 @@ class SkillToggles(SDKMod):
     def __init__(self) -> None:
         super().__init__()
 
-        option_custom_keybind = Options.Boolean(
+        self._optionCustomKeybind = Options.Boolean(
             "Custom Keybind",
             "Do you want to use a custom keybind to toggle the Action Skills? If this is off, you have to use your default Action Skill keybind.",
             False,
         )
-        option_buzzaxe_skill_toggle = Options.Boolean(
+        optionPsychoToggle = Options.Boolean(
             "Psycho Skill Toggle",
-            "Allows Krieg to return from the Buzzaxe Rampage.",
+            "Allows Krieg to return from his Buzzaxe Rampage.",
             True,
         )
-        option_deathtrap_skill_toggle = Options.Boolean(
-            "Mechromancer Skill Toggle", "Allows Gaige to recall Deathtrap.", True
+        optionMechromancerToggle = Options.Boolean(
+            "Mechromancer Skill Toggle", "Allows Gaige to recall her Deathtrap.", True
         )
-        option_dual_wield_skill_toggle = Options.Boolean(
+        optionGunzerkerToggle = Options.Boolean(
             "Gunzerker Skill Toggle", "Allows Salvador to stop his Dual Wield.", True
         )
-        option_execute_skill_toggle = Options.Boolean(
+        optionAssassinToggle = Options.Boolean(
             "Assassin Skill Toggle", "Allows Zer0 to stop Decepti0n.", True
         )
-        option_lift_skill_toggle = Options.Boolean(
+        optionSirenToggle = Options.Boolean(
             "Siren Skill Toggle", "Allows Maya to stop her Phaselock.", True
         )
-        option_scorpio_skill_toggle = Options.Boolean(
+        optionCommandoToggle = Options.Boolean(
             "Commando Skill Toggle", "Allows Axton to recall his turrets.", True
         )
 
         self._classOptions = {
-            "Psycho": option_buzzaxe_skill_toggle,
-            "Mechromancer": option_deathtrap_skill_toggle,
-            "Gunzerker": option_dual_wield_skill_toggle,
-            "Assassin": option_execute_skill_toggle,
-            "Siren": option_lift_skill_toggle,
-            "Commando": option_scorpio_skill_toggle,
+            "Psycho": optionPsychoToggle,
+            "Mechromancer": optionMechromancerToggle,
+            "Gunzerker": optionGunzerkerToggle,
+            "Assassin": optionAssassinToggle,
+            "Siren": optionSirenToggle,
+            "Commando": optionCommandoToggle,
         }
 
-        self.Options = [option_custom_keybind, *self._classOptions.values()]
-        self._setupKeybinds()
+        self.Options = [self._optionCustomKeybind, *self._classOptions.values()]
+        self._setupKeybinds(False)
 
     def Enable(self) -> None:
         super().Enable()
@@ -73,14 +73,22 @@ class SkillToggles(SDKMod):
 
     def ModOptionChanged(self, option, newValue):
         if option.Caption == "Custom Keybind":
-            self._setupKeybinds()
+            self._setupKeybinds(newValue)
 
-    def _setupKeybinds(self) -> None:
+    def _setupKeybinds(self, newValue: bool) -> None:
         self.Keybinds = [
-            Keybind("Deactivate Action Skill", "F", True, self.Options[0].CurrentValue)
+            Keybind(
+                "Deactivate Action Skill",
+                "F",
+                True,
+                not newValue,
+            )
         ]
 
-    def _getPlayerController(self):
+    def _log(self, message: str) -> None:
+        unrealsdk.Log(f"[{self.Name}] {message}")
+
+    def _getPlayerController(self) -> unrealsdk.UObject:
         return unrealsdk.GetEngine().GamePlayers[0].Actor
 
     def _isSkillToggleable(self) -> bool:
@@ -99,12 +107,16 @@ class SkillToggles(SDKMod):
 
         if skillManager.IsSkillActive(player, actionSkill):
             actionSkill.bCanBeToggledOff = True
-            player.StartActionSkill()
+            player.ServerStartActionSkill()
 
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
     ) -> None:
-        if event != KeybindManager.InputEvent.Repeat or not self._isSkillToggleable():
+        if (
+            event != KeybindManager.InputEvent.Repeat
+            or not self._optionCustomKeybind.CurrentValue
+            or not self._isSkillToggleable()
+        ):
             return
 
         self._handleSkillToggling()
@@ -117,8 +129,8 @@ class SkillToggles(SDKMod):
         params: unrealsdk.FStruct,
     ):
         if (
-            self.Options[0].CurrentValue
-            or params.Event != KeybindManager.InputEvent.Repeat
+            params.Event != KeybindManager.InputEvent.Repeat
+            or self._optionCustomKeybind.CurrentValue
         ):
             return True
 
@@ -140,9 +152,7 @@ class SkillToggles(SDKMod):
         params: unrealsdk.FStruct,
     ):
         actionSkill = getCurrentPlayerController().PlayerSkillTree.GetActionSkill()
-
-        if actionSkill.bCanBeToggledOff is True:
-            actionSkill.bCanBeToggledOff = False
+        actionSkill.bCanBeToggledOff = False
 
         return True
 
