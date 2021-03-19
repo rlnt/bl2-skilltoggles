@@ -1,4 +1,5 @@
 import unrealsdk
+import webbrowser
 from Mods.ModMenu import (
     SDKMod,
     Mods,
@@ -11,6 +12,26 @@ from Mods.ModMenu import (
     Hook,
     RegisterMod,
 )
+
+try:
+    from Mods.Eridium import log
+    from Mods.Eridium.misc import getCurrentPlayerController
+except ImportError:
+    webbrowser.open("https://github.com/RLNT/bl2_eridium")
+    raise
+
+if __name__ == "__main__":
+    import importlib
+    import sys
+
+    importlib.reload(sys.modules["Mods.Eridium"])
+    importlib.reload(sys.modules["Mods.Eridium.misc"])
+
+    # See https://github.com/bl-sdk/PythonSDK/issues/68
+    try:
+        raise NotImplementedError
+    except NotImplementedError:
+        __file__ = sys.exc_info()[-1].tb_frame.f_code.co_filename  # type: ignore
 
 
 class SkillToggles(SDKMod):
@@ -64,6 +85,11 @@ class SkillToggles(SDKMod):
         self.Options = [self._optionCustomKeybind, *self._classOptions.values()]
         self._setupKeybinds(False)
 
+    def Enable(self) -> None:
+        super().Enable()
+
+        log(self, f"Version: {self.Version}")
+
     def ModOptionChanged(self, option, newValue):
         if option.Caption == "Custom Keybind":
             self._setupKeybinds(newValue)
@@ -85,7 +111,7 @@ class SkillToggles(SDKMod):
         return unrealsdk.GetEngine().GamePlayers[0].Actor
 
     def _isSkillToggleable(self) -> bool:
-        player = self._getPlayerController()
+        player = getCurrentPlayerController()
         className = player.PlayerClass.CharacterNameId.CharacterClassId.ClassName
 
         if className not in self._classOptions:
@@ -94,7 +120,7 @@ class SkillToggles(SDKMod):
         return self._classOptions[className].CurrentValue
 
     def _handleSkillToggling(self) -> None:
-        player = self._getPlayerController()
+        player = getCurrentPlayerController()
         skillManager = player.GetSkillManager()
         actionSkill = player.PlayerSkillTree.GetActionSkill()
 
@@ -107,7 +133,7 @@ class SkillToggles(SDKMod):
     ) -> None:
         if (
             event != KeybindManager.InputEvent.Repeat
-            or self._optionCustomKeybind.CurrentValue == False
+            or not self._optionCustomKeybind.CurrentValue
             or not self._isSkillToggleable()
         ):
             return
@@ -123,11 +149,11 @@ class SkillToggles(SDKMod):
     ):
         if (
             params.Event != KeybindManager.InputEvent.Repeat
-            or self._optionCustomKeybind.CurrentValue == True
+            or self._optionCustomKeybind.CurrentValue
         ):
             return True
 
-        player = self._getPlayerController()
+        player = getCurrentPlayerController()
         hotkey = player.PlayerInput.GetKeyForAction("ActionSkill", True)
 
         if params.Key != hotkey or not self._isSkillToggleable():
@@ -144,7 +170,7 @@ class SkillToggles(SDKMod):
         function: unrealsdk.UFunction,
         params: unrealsdk.FStruct,
     ):
-        actionSkill = self._getPlayerController().PlayerSkillTree.GetActionSkill()
+        actionSkill = getCurrentPlayerController().PlayerSkillTree.GetActionSkill()
         actionSkill.bCanBeToggledOff = False
 
         return True
@@ -152,13 +178,13 @@ class SkillToggles(SDKMod):
 
 instance = SkillToggles()
 if __name__ == "__main__":
-    unrealsdk.Log(f"[{instance.Name}] Manually loaded")
+    log(instance, "Manually loaded")
     for mod in Mods:
         if mod.Name == instance.Name:
             if mod.IsEnabled:
                 mod.Disable()
             Mods.remove(mod)
-            unrealsdk.Log(f"[{instance.Name}] Removed last instance")
+            log(instance, "Removed last instance")
 
             # Fixes inspect.getfile()
             instance.__class__.__module__ = mod.__class__.__module__
