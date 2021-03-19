@@ -1,4 +1,5 @@
 import unrealsdk
+import webbrowser
 from Mods.ModMenu import (
     SDKMod,
     Mods,
@@ -11,8 +12,26 @@ from Mods.ModMenu import (
     Hook,
     RegisterMod,
 )
-from Mods.Eridium import log
-from Mods.Eridium.misc import getCurrentPlayerController
+
+try:
+    from Mods.Eridium import log
+    from Mods.Eridium.misc import getCurrentPlayerController
+except ImportError:
+    webbrowser.open("https://github.com/RLNT/bl2_eridium")
+    raise
+
+if __name__ == "__main__":
+    import importlib
+    import sys
+
+    importlib.reload(sys.modules["Mods.Eridium"])
+    importlib.reload(sys.modules["Mods.Eridium.misc"])
+
+    # See https://github.com/bl-sdk/PythonSDK/issues/68
+    try:
+        raise NotImplementedError
+    except NotImplementedError:
+        __file__ = sys.exc_info()[-1].tb_frame.f_code.co_filename  # type: ignore
 
 
 class SkillToggles(SDKMod):
@@ -159,13 +178,13 @@ class SkillToggles(SDKMod):
 
 instance = SkillToggles()
 if __name__ == "__main__":
-    log("Manually loaded")
+    log(instance, "Manually loaded")
     for mod in Mods:
         if mod.Name == instance.Name:
             if mod.IsEnabled:
                 mod.Disable()
             Mods.remove(mod)
-            log("Removed last instance")
+            log(instance, "Removed last instance")
 
             # Fixes inspect.getfile()
             instance.__class__.__module__ = mod.__class__.__module__
