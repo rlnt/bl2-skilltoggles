@@ -1,5 +1,6 @@
 import unrealsdk
 import webbrowser
+from typing import Dict
 from Mods.ModMenu import (
     SDKMod,
     Mods,
@@ -15,6 +16,7 @@ from Mods.ModMenu import (
 
 try:
     from Mods.Eridium import log
+    from Mods.Eridium.keys import KeyBinds
     from Mods.Eridium.misc import getCurrentPlayerController
 except ImportError:
     webbrowser.open("https://github.com/RLNT/bl2_eridium")
@@ -25,6 +27,7 @@ if __name__ == "__main__":
     import sys
 
     importlib.reload(sys.modules["Mods.Eridium"])
+    importlib.reload(sys.modules["Mods.Eridium.keys"])
     importlib.reload(sys.modules["Mods.Eridium.misc"])
 
     # See https://github.com/bl-sdk/PythonSDK/issues/68
@@ -43,6 +46,12 @@ class SkillToggles(SDKMod):
     SupportedGames: Game = Game.BL2
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
+
+    SettingsInputs: Dict[str, str] = {
+        KeyBinds.Enter: "Enable",
+        KeyBinds.G: "GitHub",
+        KeyBinds.D: "Discord",
+    }
 
     def __init__(self) -> None:
         super().__init__()
@@ -87,7 +96,6 @@ class SkillToggles(SDKMod):
 
     def Enable(self) -> None:
         super().Enable()
-
         log(self, f"Version: {self.Version}")
 
     def ModOptionChanged(self, option, newValue):
@@ -127,6 +135,14 @@ class SkillToggles(SDKMod):
         if skillManager.IsSkillActive(player, actionSkill):
             actionSkill.bCanBeToggledOff = True
             player.ServerStartActionSkill()
+
+    def SettingsInputPressed(self, action: str) -> None:
+        if action == "GitHub":
+            webbrowser.open("https://github.com/RLNT/bl2_skilltoggles")
+        elif action == "Discord":
+            webbrowser.open("https://discord.com/invite/Q3qxws6")
+        else:
+            super().SettingsInputPressed(action)
 
     def GameInputPressed(
         self, bind: KeybindManager.Keybind, event: KeybindManager.InputEvent
