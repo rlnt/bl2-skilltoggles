@@ -25,8 +25,8 @@ if __name__ == "__main__":
     import importlib
     import sys
 
-    importlib.reload(sys.modules["Mods.Eridium"])
-    importlib.reload(sys.modules["Mods.Eridium.keys"])
+    importlib.import_module(sys.modules["Mods.Eridium"])
+    importlib.import_module(sys.modules["Mods.Eridium.keys"])
 
     # See https://github.com/bl-sdk/PythonSDK/issues/68
     try:
