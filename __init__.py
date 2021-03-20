@@ -14,8 +14,7 @@ from Mods.ModMenu import (
 )
 
 try:
-    from Mods.Eridium import log
-    from Mods.Eridium.misc import getCurrentPlayerController
+    from Mods.Eridium import log, getCurrentPlayerController
 except ImportError:
     webbrowser.open("https://github.com/RLNT/bl2_eridium")
     raise
@@ -25,7 +24,6 @@ if __name__ == "__main__":
     import sys
 
     importlib.reload(sys.modules["Mods.Eridium"])
-    importlib.reload(sys.modules["Mods.Eridium.misc"])
 
     # See https://github.com/bl-sdk/PythonSDK/issues/68
     try:
