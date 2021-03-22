@@ -205,7 +205,7 @@ class SkillToggles(SDKMod):
     def _requestInfoReset(self, PC: Optional[unrealsdk.UObject] = None) -> None:
         self._executeInfoReset(PC)
 
-    def _executeInfoReset(self, PC: unrealsdk.UObject = None) -> None:
+    def _executeInfoReset(self, PC: Optional[unrealsdk.UObject] = None) -> None:
         # if PC is None, get current local player
         if PC is None:
             PC = getCurrentPlayerController()
