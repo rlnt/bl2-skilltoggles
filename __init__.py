@@ -1,7 +1,7 @@
+import unrealsdk
 import webbrowser
 from typing import Dict, Optional
 
-import unrealsdk
 from Mods.ModMenu import (
     EnabledSaveType,
     Game,
