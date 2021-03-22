@@ -12,6 +12,25 @@ The format is based on [Keep a Changelog][keep a changelog] and this project adh
 
 ## [Released]
 
+## [1.2.0] - 2021-03-23
+
+### Added
+- multiplayer support
+- version checker
+- regions
+
+### Changed
+- hotkey handling
+
+### Removed
+- default action skill hotkey support
+  - this can still be achieved with default settings
+  - read more about that in the readme notes
+
+### Fixed
+- info resetting on classes
+
+
 ## [1.1.1] - 2021-03-19
 
 ### Changed
@@ -51,6 +70,7 @@ The format is based on [Keep a Changelog][keep a changelog] and this project adh
 
 [unreleased]: https://github.com/RLNT/bl2_skilltoggles/compare/v1.0.0...HEAD
 [released]: https://github.com/RLNT/bl2_skilltoggles/releases
+[1.2.0]: https://github.com/RLNT/bl2_skilltoggles/compare/v1.1.1..v1.2.0
 [1.1.1]: https://github.com/RLNT/bl2_skilltoggles/compare/v1.1.0..v1.1.1
 [1.1.0]: https://github.com/RLNT/bl2_skilltoggles/compare/v1.0.0..v1.1.0
 [1.0.0]: https://github.com/RLNT/bl2_skilltoggles/releases/v1.0.0
