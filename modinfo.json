@@ -1,0 +1,44 @@
+{
+    "mods": [
+        {
+            "name": "Skill Toggles",
+            "authors": ["Relentless", "Chronophylos"],
+            "description": [
+                "Lets you deactivate Action Skills by holding a configurable hotkey.\n",
+                "\n",
+                "Features:\n",
+                "- deactivate the Action Skills for each character\n",
+                "- configurable hotkey\n",
+                "- options to enable deactivation for class individually\n",
+                "\n",
+                "Notes:\n",
+                "- since this is often not the case with SDK mods: yes, this has multiplayer support if all players have it installed\n",
+                "- deactivating Action Skills won't give you a cooldown bonus\n",
+                "- in a multiplayer environment, only the host settings of the mod are taken into account\n",
+                "  - that means only the host can define which Action Skills are deactivatable\n",
+                "  - you can still use your own hotkey\n",
+                "- the default toggle key is `F` which also is the default Action Skill hotkey\n",
+                "  - you need to *hold* they key, not just press it to avoid accidental deactivation\n",
+                "  - you can change it to anything in the modded keybinds but you can't change it back to `F` because it's already taken by the Action Skill\n",
+                "  - if you want to use the `F` key again or, you need to delete the settings.json file in the mod directory, restart the game and reenable the mod\n",
+                "  - if you are using another hotkey for the Action Skill, you can also directly edit the modded hotkey in the `settings.json` file while the game is closed\n",
+                "\n",
+                "If you found a bug or you have a feature request, please use our issue tracker linked below.\n",
+                "In case you need support, please join our [Discord](https://discordapp.com/invite/Q3qxws6)"
+            ],
+            "tagline": "Lets you deactivate Action Skills by holding a configurable hotkey.",
+            "types": ["Utility"],
+            "supports": ["BL2"],
+            "issues": "https://github.com/RLNT/bl2_skilltoggles/issues",
+            "source": "https://github.com/RLNT/bl2_skilltoggles",
+            "latest": "1.2.0",
+            "versions": {
+                "1.2.0": "https://github.com/RLNT/bl2_skilltoggles/releases/tag/v1.2.0"
+            },
+            "requirements": {
+                "EridiumLib": ">=0.3.2"
+            },
+            "license": "GNU GPLv3"
+        }
+    ]
+}
