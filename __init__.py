@@ -50,7 +50,7 @@ class SkillToggles(SDKMod):
     Description: str = "Deactivate Action Skills by holding a configurable hotkey."
     Version: str = "1.2.0"
 
-    SupportedGames: Game = Game.BL2
+    SupportedGames: Game = Game.BL2 | Game.TPS
     Types: ModTypes = ModTypes.Utility
     SaveEnabledState: EnabledSaveType = EnabledSaveType.LoadWithSettings
 
@@ -65,34 +65,65 @@ class SkillToggles(SDKMod):
     def __init__(self) -> None:
         super().__init__()
 
-        optionPsychoToggle = Options.Boolean(
-            "Psycho Skill Toggle",
-            "Allows Krieg to return from his Buzzaxe Rampage.",
-            True,
-        )
-        optionMechromancerToggle = Options.Boolean(
-            "Mechromancer Skill Toggle", "Allows Gaige to recall her Deathtrap.", True
-        )
-        optionGunzerkerToggle = Options.Boolean(
-            "Gunzerker Skill Toggle", "Allows Salvador to stop his Dual Wield.", True
-        )
-        optionAssassinToggle = Options.Boolean(
-            "Assassin Skill Toggle", "Allows Zer0 to stop Decepti0n.", True
-        )
-        optionSirenToggle = Options.Boolean(
-            "Siren Skill Toggle", "Allows Maya to stop her Phaselock.", True
-        )
-        optionCommandoToggle = Options.Boolean(
-            "Commando Skill Toggle", "Allows Axton to recall his turrets.", True
-        )
-        self._classOptions = {
-            "Psycho": optionPsychoToggle,
-            "Mechromancer": optionMechromancerToggle,
-            "Gunzerker": optionGunzerkerToggle,
-            "Assassin": optionAssassinToggle,
-            "Siren": optionSirenToggle,
-            "Commando": optionCommandoToggle,
-        }
+        if Game.GetCurrent() == Game.BL2:
+            optionSirenToggle = Options.Boolean(
+                "Siren Skill Toggle", "Allows Maya to stop her Phaselock.", True
+            )
+            optionGunzerkerToggle = Options.Boolean(
+                "Gunzerker Skill Toggle", "Allows Salvador to stop his Dual Wield.", True
+            )
+            optionCommandoToggle = Options.Boolean(
+                "Commando Skill Toggle", "Allows Axton to recall his turrets.", True
+            )
+            optionAssassinToggle = Options.Boolean(
+                "Assassin Skill Toggle", "Allows Zer0 to stop Decepti0n.", True
+            )
+            optionMechromancerToggle = Options.Boolean(
+                "Mechromancer Skill Toggle", "Allows Gaige to recall her Deathtrap.", True
+            )
+            optionPsychoToggle = Options.Boolean(
+                "Psycho Skill Toggle",
+                "Allows Krieg to return from his Buzzaxe Rampage.",
+                True,
+            )
+
+            self._classOptions = {
+                "Siren": optionSirenToggle,
+                "Gunzerker": optionGunzerkerToggle,
+                "Commando": optionCommandoToggle,
+                "Assassin": optionAssassinToggle,
+                "Mechromancer": optionMechromancerToggle,
+                "Psycho": optionPsychoToggle,
+            }
+        elif Game.GetCurrent() == Game.TPS:
+            optionGladiatorToggle = Options.Boolean(
+                "Gladiator Skill Toggle", "Allows Athena to stop her Kinetic Aspis.", True
+            )
+            optionEnforcerToggle = Options.Boolean(
+                "Enforcer Skill Toggle", "Allows Wilhelm to recall Wolf and Saint.", True
+            )
+            optionLawbringerToggle = Options.Boolean(
+                "Lawbringer Skill Toggle", "Allows Nisha to stop her showdown.", True
+            )
+            optionFragtrapToggle = Options.Boolean(
+                "Fragtrap Skill Toggle", "Allows Claptrap to stop VaultHunter.EXE.", True
+            )
+            optionDoppelgangerToggle = Options.Boolean(
+                "Doppelganger Skill Toggle", "Allows Jack to stop his Expendable Assets.", True
+            )
+            optionBaronessToggle = Options.Boolean(
+                "Baroness Skill Toggle", "Allows Aurelia to stop Cold As Ice.", True
+            )
+
+            self._classOptions = {
+                "Gladiator": optionGladiatorToggle,
+                "Enforcer": optionEnforcerToggle,
+                "Lawbringer": optionLawbringerToggle,
+                "Fragtrap": optionFragtrapToggle,
+                "Doppelganger": optionDoppelgangerToggle,
+                "Baroness": optionBaronessToggle,
+            }
+
         self.Options = [*self._classOptions.values()]
 
         self.Keybinds = [
