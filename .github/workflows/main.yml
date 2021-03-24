@@ -15,6 +15,9 @@ jobs:
       with:
         python-version: '3.7'
         architecture: 'x86'
+    - uses: RLNT/bl2-lint-action
+      with:
+        mod-name: ${{ env.MOD_NAME }}
 
     - name: Clone PythonSDK Mods
       run: |
