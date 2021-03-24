@@ -1,6 +1,6 @@
 # **Skill Toggles**
 
-> A [PythonSDK] mod for [Borderlands 2][borderlands] to deactivate Action Skills with a configurable hotkey.
+> A [PythonSDK] mod for [Borderlands 2][borderlands2] and [Borderlands TPS][borderlandstps] to deactivate Action Skills with a configurable hotkey.
 
 - [Discord][discord]
 - PythonSDK: `v0.7.9`
@@ -19,6 +19,7 @@
 - this mod needs the [EridiumLib] in order to run
 - since this is often not the case with SDK mods: yes, this has multiplayer support
 - deactivating Action Skills won't give you a cooldown bonus
+  - there are some exceptions in Borderlands TPS where it works
 - in a multiplayer environment, only the host settings of the mod are taken into account
   - that means only the host can define which Action Skills are deactivatable
   - you can still use your own hotkey
@@ -47,7 +48,8 @@ This project is licensed under the [GNU GPL v3.0][license].
 
 <!-- Links -->
 [pythonsdk]: http://borderlandsmodding.com/sdk-mods/
-[borderlands]: https://store.steampowered.com/app/49520/Borderlands_2/
+[borderlands2]: https://store.steampowered.com/app/49520/Borderlands_2/
+[borderlandstps]: https://store.steampowered.com/app/261640/Borderlands_The_PreSequel/
 [discord]: https://discordapp.com/invite/Q3qxws6
 [releases]: https://github.com/RLNT/bl2_skilltoggles/releases
 [eridiumlib]: https://github.com/RLNT/bl2_eridium
