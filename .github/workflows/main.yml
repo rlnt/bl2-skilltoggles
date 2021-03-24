@@ -11,11 +11,7 @@ jobs:
   check:
     runs-on: windows-latest
     steps:
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.7'
-        architecture: 'x86'
-    - uses: RLNT/bl2-lint-action
+    - uses: RLNT/bl2-lint-action@v1
       with:
         mod-name: ${{ env.MOD_NAME }}
 
