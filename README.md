@@ -5,6 +5,7 @@
 - [Discord][discord]
 - PythonSDK: `v0.7.9`
 - Mod Menu: `v2.4`
+- EridiumLib: `v0.4.1`
 
 ---
 
