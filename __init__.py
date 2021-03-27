@@ -51,7 +51,8 @@ class SkillToggles(SDKMod):
     Name: str = "Skill Toggles"
     Author: str = "Relentless, Chronophylos"
     Description: str = "Deactivate Action Skills by holding a configurable hotkey."
-    Version: str = "1.3.0"
+    Version: str = "1.3.1"
+    _EridiumVersion: str = "0.4.1"
 
     SupportedGames: Game = Game.BL2 | Game.TPS
     Types: ModTypes = ModTypes.Utility
