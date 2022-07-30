@@ -81,8 +81,8 @@ The format is based on [Keep a Changelog][keep a changelog] and this project adh
 [semantic versioning]: https://semver.org/
 
 <!-- Versions -->
-[unreleased]: https://github.com/DAmNRelentless/bl2-skilltoggles/compare/v1.0.0...HEAD
-[released]: https://github.com/DAmNRelentless/bl2-skilltoggles/releases
+[unreleased]: https://github.com/DAmNRelentless/bl2-skilltoggles/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/DAmNRelentless/bl2-skilltoggles/compare/v1.3.1..v1.3.2
 [1.3.1]: https://github.com/DAmNRelentless/bl2-skilltoggles/compare/v1.3.0..v1.3.1
 [1.3.0]: https://github.com/DAmNRelentless/bl2-skilltoggles/compare/v1.2.0..v1.3.0
 [1.2.0]: https://github.com/DAmNRelentless/bl2-skilltoggles/compare/v1.1.1..v1.2.0
