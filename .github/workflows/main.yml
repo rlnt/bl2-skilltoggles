@@ -3,80 +3,80 @@ name: CI
 on: [push, pull_request]
 
 env:
-  MOD_NAME: SkillToggles
-  RELEASE_FILES: "*.py LICENSE"
-  UNREALSDK_PYI_URL: https://gist.githubusercontent.com/Chronophylos/b77049094c20c6906ebe13d042a07998/raw/bf05d45e33c9f69f03eb8b90d72e85d4b2f61ff0/unrealsdk.pyi
+    MOD_NAME: SkillToggles
+    RELEASE_FILES: '*.py LICENSE'
+    UNREALSDK_PYI_URL: https://gist.githubusercontent.com/Chronophylos/b77049094c20c6906ebe13d042a07998/raw/bf05d45e33c9f69f03eb8b90d72e85d4b2f61ff0/unrealsdk.pyi
 
 jobs:
-  check:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/setup-python@v1
-      with:
-        python-version: '3.7'
-        architecture: 'x86'
+    check:
+        runs-on: windows-latest
+        steps:
+            - uses: actions/setup-python@v1
+              with:
+                  python-version: '3.7'
+                  architecture: 'x86'
 
-    - name: Clone PythonSDK Mods
-      run: |
-        git clone --depth 1 --filter=blob:none --sparse https://github.com/bl-sdk/PythonSDK
-        cd PythonSDK
-        git sparse-checkout init --cone
-        git sparse-checkout set Mods
-    
-    - name: Download unrealsdk.pyi
-      run: Invoke-WebRequest -Uri ${{ env.UNREALSDK_PYI_URL }} -Outfile PythonSDK/unrealsdk.pyi
+            - name: Clone PythonSDK Mods
+              run: |
+                  git clone --depth 1 --filter=blob:none --sparse https://github.com/bl-sdk/PythonSDK
+                  cd PythonSDK
+                  git sparse-checkout init --cone
+                  git sparse-checkout set Mods
 
-    - uses: actions/checkout@v2     
-      with:
-        path: PythonSDK/Mods/${{ env.MOD_NAME }}
-    
-    - name: Clone EridiumLib
-      uses: actions/checkout@v2
-      with:
-        repository: RLNT/bl2_eridium
-        path: PythonSDK/Mods/EridiumLib
+            - name: Download unrealsdk.pyi
+              run: Invoke-WebRequest -Uri ${{ env.UNREALSDK_PYI_URL }} -Outfile PythonSDK/unrealsdk.pyi
 
-    - name: Install dependencies
-      working-directory: PythonSDK
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r Mods/${{ env.MOD_NAME }}/requirements-linters.txt
-    
-    - name: Copy config files
-      working-directory: PythonSDK/Mods/${{ env.MOD_NAME }}
-      run: Copy-Item -Path pyproject.toml, setup.cfg -Destination ../../
+            - uses: actions/checkout@v2
+              with:
+                  path: PythonSDK/Mods/${{ env.MOD_NAME }}
 
-    - name: Lint with isort
-      working-directory: PythonSDK
-      run: python -m isort Mods/${{ env.MOD_NAME }} --check-only --diff
-    - name: Lint with black
-      working-directory: PythonSDK
-      run: python -m black Mods/${{ env.MOD_NAME }} --check
-    - name: Lint with flake8
-      working-directory: PythonSDK
-      run: python -m flake8 Mods/${{ env.MOD_NAME }} -v --show-source --statistics
-    - name: Lint with mypy
-      working-directory: PythonSDK
-      run: python -m mypy Mods/${{ env.MOD_NAME }} --pretty
+            - name: Clone EridiumLib
+              uses: actions/checkout@v2
+              with:
+                  repository: DAmNRelentless/bl2-eridiumlib
+                  path: PythonSDK/Mods/EridiumLib
 
-  build:
-    runs-on: ubuntu-latest
-    needs: check
-    if: startsWith(github.ref, 'refs/tags/')
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+            - name: Install dependencies
+              working-directory: PythonSDK
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r Mods/${{ env.MOD_NAME }}/requirements-linters.txt
 
-    - name: Package as tar
-      run: tar -czvf ${{ env.MOD_NAME }}.tar.gz $RELEASE_FILES
-    - name: Package as zip
-      run: zip -r ${{ env.MOD_NAME }}.zip $RELEASE_FILES
+            - name: Copy config files
+              working-directory: PythonSDK/Mods/${{ env.MOD_NAME }}
+              run: Copy-Item -Path pyproject.toml, setup.cfg -Destination ../../
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      with:
-          files: |
-            ${{ env.MOD_NAME }}.tar.gz
-            ${{ env.MOD_NAME }}.zip
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Lint with isort
+              working-directory: PythonSDK
+              run: python -m isort Mods/${{ env.MOD_NAME }} --check-only --diff
+            - name: Lint with black
+              working-directory: PythonSDK
+              run: python -m black Mods/${{ env.MOD_NAME }} --check
+            - name: Lint with flake8
+              working-directory: PythonSDK
+              run: python -m flake8 Mods/${{ env.MOD_NAME }} -v --show-source --statistics
+            - name: Lint with mypy
+              working-directory: PythonSDK
+              run: python -m mypy Mods/${{ env.MOD_NAME }} --pretty
+
+    build:
+        runs-on: ubuntu-latest
+        needs: check
+        if: startsWith(github.ref, 'refs/tags/')
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Package as tar
+              run: tar -czvf ${{ env.MOD_NAME }}.tar.gz $RELEASE_FILES
+            - name: Package as zip
+              run: zip -r ${{ env.MOD_NAME }}.zip $RELEASE_FILES
+
+            - name: Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: |
+                      ${{ env.MOD_NAME }}.tar.gz
+                      ${{ env.MOD_NAME }}.zip
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
